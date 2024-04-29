@@ -1,0 +1,25 @@
+name: .NET build and test
+description: Execute restore, build and test in .net code
+
+inputs:
+  working-dir:
+    description: "Directory to run commands"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore dependencies
+      run: dotnet restore
+      shell: bash
+      working-directory: ${{ inputs.working-dir }}
+
+    - name: Build
+      run: dotnet build --no-restore
+      shell: bash
+      working-directory: ${{ inputs.working-dir }}
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+      shell: bash
+      working-directory: ${{ inputs.working-dir }}

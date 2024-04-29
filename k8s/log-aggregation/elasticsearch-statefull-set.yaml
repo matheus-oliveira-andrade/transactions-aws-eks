@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+  selector:
+    matchLabels:
+      component: elasticsearch
+  serviceName: elasticsearch-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:8.0.0
+          ports:
+            - name: default
+              containerPort: 9200
+            - name: node-to-node
+              containerPort: 9300
+          volumeMounts:
+            - name: volume-claim-elasticsearch
+              mountPath: /var/lib/elasticsearch
+          env:
+            - name: discovery.type
+              value: "single-node"
+            - name: ES_JAVA_OPTS
+              value: "-Xms2g -Xmx2g"
+            - name: xpack.security.enabled
+              value: "false"
+          resources:
+            requests:
+              cpu: "400m"
+            limits:
+              cpu: "750m"
+  volumeClaimTemplates:
+    - metadata:
+        name: volume-claim-elasticsearch
+      spec:
+        storageClassName: elasticsearch-local-storage
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 800Mi

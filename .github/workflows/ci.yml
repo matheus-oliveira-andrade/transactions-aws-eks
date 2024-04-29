@@ -1,0 +1,40 @@
+name: .NET
+
+on:
+  pull_request:
+    branches: ["master"]
+  push:
+    branches: ["master"]
+
+jobs:
+  transactions-movements-app-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: CI transactions movements app
+        uses: ./.github/actions/dotnet-build-test
+        with:
+          working-dir: "./applications/transactions-movements-app"
+
+  transactions-seed-app-ci:
+    runs-on: ubuntu-latest  
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: CI transactions seed app
+        uses: ./.github/actions/dotnet-build-test
+        with:
+          working-dir: "./applications/transactions-seed-app"

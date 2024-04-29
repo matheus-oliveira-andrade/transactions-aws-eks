@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movements-api-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: movements-api
+  template:
+    metadata:
+      labels:
+        component: movements-api
+    spec:
+      containers:
+        - name: movements-api
+          image: micrommath/transaction-movements-api
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: shared-data
+              mountPath: /logs
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: "Production"
+            - name: MovementsDb__Host
+              value: "postgres-svc"
+            - name: MovementsDb__InitialCatalog
+              value: "TransactionsDb"
+            - name: MovementsDb__User
+              value: "xpto"
+            - name: MovementsDb__Password
+              valueFrom:
+                secretKeyRef:
+                  name: movements-db-password
+                  key: MovementsDb_Password
+          readinessProbe:
+            initialDelaySeconds: 3
+            periodSeconds: 60
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080                    
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 90
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "250m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"    
+        - name: fluentd
+          image: micrommath/fluentd
+          volumeMounts:
+            - name: fluentd-config-volume
+              mountPath: /fluentd/etc  
+            - name: shared-data
+              mountPath: /logs
+      volumes:
+        - name: fluentd-config-volume
+          configMap:
+            name: fluentd-config-map
+        - name: shared-data
+          emptyDir: {}            

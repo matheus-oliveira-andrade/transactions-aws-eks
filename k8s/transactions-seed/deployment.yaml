@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transactions-seed-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: transactions-seed
+  template:
+    metadata:
+      labels:
+        component: transactions-seed
+    spec:
+      containers:
+        - name: transactions-seed
+          image: micrommath/transactions-seed
+          volumeMounts:
+            - name: shared-data
+              mountPath: /logs
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: "Production"
+            - name: RabbitMqOptions__UserName
+              value: "admin"
+            - name: RabbitMqOptions__HostName
+              value: "rabbitmq-cluster-ip-service"
+            - name: RabbitMqOptions__Password
+              valueFrom:
+                secretKeyRef:
+                  name: rabbit-mq-password
+                  key: RabbitMq_Password
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "250m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"        
+        - name: fluentd
+          image: micrommath/fluentd
+          volumeMounts:
+            - name: fluentd-config-volume
+              mountPath: /fluentd/etc
+            - name: shared-data
+              mountPath: /logs
+      volumes:
+        - name: fluentd-config-volume
+          configMap:
+            name: fluentd-config-map
+        - name: shared-data
+          emptyDir: {}     

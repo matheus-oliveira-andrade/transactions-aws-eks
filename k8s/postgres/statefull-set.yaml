@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+  selector:
+    matchLabels:
+      component: postgres
+  serviceName: "postgres-svc"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15.2         
+          ports:
+            - containerPort: 5432   
+          volumeMounts:
+            - name: volume-claim-postgres
+              mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              value: "xpto"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: movements-db-password
+                  key: MovementsDb_Password
+            - name: POSTGRES_DB
+              value: "TransactionsDb"
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "250m"
+            limits:
+              memory: "250Mi"
+              cpu: "500m"
+  volumeClaimTemplates:
+    - metadata:
+        name: volume-claim-postgres
+      spec:
+        storageClassName: postgres-local-storage
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 700Mi

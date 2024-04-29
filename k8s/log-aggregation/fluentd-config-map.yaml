@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config-map
+data:
+  fluent.conf: |
+    <source>
+      @type tail
+      path /logs/Transactions_Movements_Api.log, /logs/Transactions_Movements_AsyncReceiver.log, /logs/Transactions_Seed.log
+      pos_file /tmp/Transactions.log.pos
+      tag Transactions.log
+    
+      <parse>
+        @type json
+      </parse>
+    </source>
+    
+    <match Transactions.log>
+      @type elasticsearch
+      host elasticsearch-service
+      port 9200
+      index_name fluentd-logs
+      type_name fluentd
+    </match>
