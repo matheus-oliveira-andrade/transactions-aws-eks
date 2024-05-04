@@ -42,5 +42,5 @@ Project to expose, through an API, the report of movements from the accounts. Tr
 
 ### Architecture
 
-![image](https://github.com/matheus-oliveira-andrade/transactions/assets/32457879/1ab7e4cd-bb39-4ff9-bf0a-b5a9e4f57d06)
+![architecture](docs/architecture.png)
 
