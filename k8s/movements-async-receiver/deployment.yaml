@@ -24,7 +24,7 @@ spec:
             - name: RabbitMqOptions__UserName
               value: "admin"
             - name: RabbitMqOptions__HostName
-              value: "rabbitmq-cluster-ip-service"
+              value: "rabbitmq-svc"
             - name: RabbitMqOptions__Password
               valueFrom:
                 secretKeyRef:

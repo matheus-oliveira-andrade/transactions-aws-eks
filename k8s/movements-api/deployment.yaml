@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: movements-api-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       component: movements-api
@@ -62,6 +62,13 @@ spec:
               mountPath: /fluentd/etc  
             - name: shared-data
               mountPath: /logs
+          resources:
+            requests:
+              memory: "70Mi"
+              cpu: "250m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"
       volumes:
         - name: fluentd-config-volume
           configMap:
