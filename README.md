@@ -1,41 +1,46 @@
-## Introdution
+## Introduction
 
-This project aims to provide an API for retrieving account movements, applying concepts like async comunications, observability and use of container orchestration. It is built upon the foundation of the [existing repository here](https://github.com/matheus-oliveira-andrade/transactions) and is designed to run seamlessly in a Kubernetes environment.
+This project aims to provide an API for retrieving account movements, applying concepts like async communications, observability, and the use of containers and orchestration. It is built upon the foundation of the [existing repository](https://github.com/matheus-oliveira-andrade/transactions-k8s)  created to run on any Kubernetes cluster. This version is designed to run on Kubernetes using the AWS EKS service; all required resources are provisioned by IAC using Terraform.
 
 ## Getting Started
 
-Project to expose, through an API, the report of movements from the accounts. Transactions are created by the `Seed` console application and published to a topic in `RabbitMQ`, then read by the `Movements.AsyncReceiver` application, which processes and saves the data in the `PostgreSQL` database. This data is then exposed through the `Movements.Api` at the `/report/{{accountId}}` endpoint.
+Project to expose, through an API, the report of movements from the accounts. Transactions are created by the `Seed` console application and published to a topic in `RabbitMQ`, then read by the `Movements.AsyncReceiver` application, which processes and saves the data in the `PostgreSQL` database. This data is then exposed through the `Movements.Api`.
 
-### Setup in docker-desktop
+### Setup
 
-1 - execute script [`run.sh`](run.sh) to create all required resources
+1 - Creating AWS EKS Cluster
+  - All required resources and steps to create EKS Cluster can be found in this [README](/infra/README.md)
+
+2 - Apply k8s manifests
    ```bash
    # use parameter --build-push to build and push docker images to docker hub
    ./run.sh # --build-push
    ```
 
-2 - Access movements public API 
+3 - Access movements public API 
    - Docs movements API - Swagger
      ```bash
-     http://localhost/movements/swagger
+     http://{{LoadBalanceAddress}}/movements/swagger
      ```
-   - Get movements report for account 123456-78
+   - Example get movements report using movements API
      ```bash
-     curl http://localhost/movements/v1/report/123456-78
+     curl http://{{LoadBalanceAddress}}/movements/v1/report/123456-78
      ```
 
-3 - Access logs in kibana
-   - Local Kibana address
+4 - Configure kibana to use index of logs
+   - Kibana address
      ```bash
-     http://localhost/kibana
+     http://{{LoadBalanceAddress}}/kibana
      ```
-   - Configuring index pattern for see logs:
-       1. [Index patterns page](http://localhost/kibana/app/management/kibana/indexPatterns)
-       2. Create data view
-       3. Name: fluentd-logs
-       4. Create data view button
+   - Index to see logs:
+       1. Address to configure index patterns page
+          ```bash
+          http://{{LoadBalanceAddress}}/kibana/app/management/kibana/indexPatterns
+          ```
+       2. Create `Data view`
+       3. Recommended name: `fluentd-logs` 
 
-4 - Clean up, run script [`clean-up.sh`](clean-up.sh)
+### Clean up
    ```bash
    ./clean-up.sh
    ```
