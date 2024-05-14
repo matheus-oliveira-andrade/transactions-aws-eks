@@ -1,0 +1,34 @@
+﻿[
+  {
+    "transactionId": "eebcfff3-0b8e-414d-ba18-e73c242b3b56",
+    "accountId": "123456-78",
+    "processingDate": "2023-01-04T08:00:00.600Z",
+    "description": "apple.com/bill",
+    "value": -99.90,
+    "category": "saúde"
+  },
+  {
+    "transactionId": "37b46336-57fa-4e26-be99-50bf8ed8f542",
+    "accountId": "123456-78",
+    "processingDate": "2023-02-04T08:00:00.600Z",
+    "description": "Ifood *ifd* Dog da esquina",
+    "value": -65.90,
+    "category": "alimentação"
+  },
+  {
+    "transactionId": "aaa46336-57fa-4e26-be99-50bf8ed8f542",
+    "accountId": "123456-78",
+    "processingDate": "2023-03-04T08:00:00.600Z",
+    "description": "Pix recebido da mariazinha",
+    "value": 500.00,
+    "category": "pix"
+  },
+  {
+    "transactionId": "4ba8e3f7-1212-490a-92bc-8f515265db25",
+    "accountId": "123456-78",
+    "processingDate": "2023-02-04T08:00:00.600Z",
+    "description": "Tatiane produtos natura",
+    "value": -100.00,
+    "category": "pix"
+  }
+]

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movements-async-receiver-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: movements-async-receiver
+  template:
+    metadata:
+      labels:
+        component: movements-async-receiver
+    spec:
+      containers:
+        - name: movements-async-receiver
+          image: micrommath/transaction-movements-async-receiver
+          volumeMounts:
+            - name: shared-data
+              mountPath: /logs
+          env:
+            - name: DOTNET_ENVIRONMENT
+              value: "Production"
+            - name: RabbitMqOptions__UserName
+              value: "admin"
+            - name: RabbitMqOptions__HostName
+              value: "rabbitmq-svc"
+            - name: RabbitMqOptions__Password
+              valueFrom:
+                secretKeyRef:
+                  name: rabbit-mq-password
+                  key: RabbitMq_Password
+
+            - name: MovementsDb__Host
+              value: "postgres-svc"
+            - name: MovementsDb__InitialCatalog
+              value: "TransactionsDb"
+            - name: MovementsDb__User
+              value: "xpto"
+            - name: MovementsDb__Password
+              valueFrom:
+                secretKeyRef:
+                  name: movements-db-password
+                  key: MovementsDb_Password
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "250m"
+            limits:
+              memory: "200Mi"
+              cpu: "500m"                  
+        - name: fluentd
+          image: micrommath/fluentd
+          volumeMounts:
+            - name: fluentd-config-volume
+              mountPath: /fluentd/etc
+            - name: shared-data
+              mountPath: /logs
+              
+      volumes:
+        - name: fluentd-config-volume
+          configMap:
+            name: fluentd-config-map
+        - name: shared-data
+          emptyDir: {}    
