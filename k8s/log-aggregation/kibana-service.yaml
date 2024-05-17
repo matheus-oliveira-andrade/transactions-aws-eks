@@ -2,8 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kibana-service
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /status
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     component: kibana
   ports:

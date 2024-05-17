@@ -22,8 +22,6 @@ spec:
               value: "http://elasticsearch-service:9200"
             - name: ELASTICSEARCH_HOSTS
               value: "http://elasticsearch-service:9200"
-            - name: SERVER_BASEPATH
-              value: "/kibana"
           resources:
             requests:
               memory: "600Mi"
