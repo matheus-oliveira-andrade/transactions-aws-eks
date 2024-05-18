@@ -2,8 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: movements-api-cluster-ip-service
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /movements/healthz
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:    
       component: movements-api
   ports:
