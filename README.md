@@ -17,25 +17,33 @@ Project to expose, through an API, the report of movements from the accounts. Tr
    ./run.sh # --build-push
    ```
 
-3 - Access movements public API 
+3 - Application load balancers addresses
+```bash
+kubectl get ingress
+# NAME             CLASS               HOSTS   ADDRESS                                                                 PORTS   AGE
+# apps-ingress     aws-ingress-class   *       k8s-default-appsingress-74a914e12f-156167.us-east-1.elb.amazonaws.com   80      39s
+# kibana-ingress   aws-ingress-class   *       k8s-default-kibanaingress-364e026a6b-1816.us-east-1.elb.amazonaws.com   80      38s
+```
+
+4 - Access movements public API 
    - Docs movements API - Swagger
      ```bash
-     http://{{LoadBalanceAddress}}/movements/swagger
+     http://{{apps-ingress-lb-address}}/movements/swagger
      ```
    - Example get movements report using movements API
      ```bash
-     curl http://{{LoadBalanceAddress}}/movements/v1/report/123456-78
+     curl http://{{apps-ingress-lb-address}}/movements/v1/report/123456-78
      ```
 
-4 - Configure kibana to use index of logs
+5 - Configure kibana to use index of logs
    - Kibana address
      ```bash
-     http://{{LoadBalanceAddress}}/kibana
+     http://{{kibana-ingress-lb-address}}
      ```
    - Index to see logs:
        1. Address to configure index patterns page
           ```bash
-          http://{{LoadBalanceAddress}}/kibana/app/management/kibana/indexPatterns
+          http://{{kibana-ingress-lb-address}}/app/management/kibana/indexPatterns
           ```
        2. Create `Data view`
        3. Recommended name: `fluentd-logs` 
@@ -54,7 +62,7 @@ Project to expose, through an API, the report of movements from the accounts. Tr
 - **fluentd**: Responsible for tailing log files and sending them to Elasticsearch
 - **kibana**: Interface responsible for querying and visualizing logs in Elasticsearch
 
-![architecture](docs/architecture.png)
+![architecture](docs/architecture-v2.png)
 
 ### Technologies
 
